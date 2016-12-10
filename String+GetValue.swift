@@ -13,27 +13,27 @@ import Foundation
 
 extension String {
 
-	func parsedValue(starters starters: [String]? = nil, ending: String? = nil) -> String? {
+	func parsedValue(starters: [String]? = nil, ending: String? = nil) -> String? {
 
-		var range = self.rangeOfString(self)!
+		var range = self.range(of: self)!
 
 		if starters != nil && starters!.count > 0 {
 			for starter in starters! {
-				if starter.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) == 0 { continue }
-				if let tmp = self.rangeOfString(starter, options: [], range: range) {
-					range.startIndex = tmp.endIndex
+				if starter.lengthOfBytes(using: .ascii) == 0 { continue }
+				if let tmp = self.range(of: starter, options: [], range: range) {
+					range = Range(uncheckedBounds: (tmp.upperBound, range.upperBound))
 				}
 				else { return nil }
 			}
 		}
 
-		if ending != nil && ending!.lengthOfBytesUsingEncoding(NSASCIIStringEncoding) > 0 {
-			if let tmp = self.rangeOfString(ending!, options: [], range: range) {
-				range.endIndex = tmp.startIndex
+		if ending != nil && ending!.lengthOfBytes(using: .ascii) > 0 {
+			if let tmp = self.range(of: ending!, options: [], range: range) {
+				range = Range(uncheckedBounds: (range.lowerBound, tmp.lowerBound))
 			}
 			else { return nil }
 		}
 
-		return self.substringWithRange(range)
+		return self.substring(with: range)
 	}
 }
